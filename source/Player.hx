@@ -56,7 +56,7 @@ class Player extends FlxSprite
 			xMaxSpeed = walkSpeed;
 		}
 		
-		// Moving Left
+		// If horizontalMove is -1, the Player should move left.
 		if (horizontalMove == -1)
 		{
 			if (velocity.x > 0)
@@ -69,8 +69,8 @@ class Player extends FlxSprite
 			}
 		}
 		
-		// Moving Right
-		if (horizontalMove == 1)
+		// If horizontalMove is 1, the Player should move right.
+		else if (horizontalMove == 1)
 		{
 			if (velocity.x < 0)
 			{
@@ -83,7 +83,7 @@ class Player extends FlxSprite
 		}
 		
 		// Slow down if no direction held
-		if (horizontalMove == 0)
+		else if (horizontalMove == 0)
 		{
 			if (velocity.x > 0)
 			{
@@ -110,6 +110,60 @@ class Player extends FlxSprite
 				}
 			}
 		}
+		#if debug // Only compile this code into a debug version of the game.
+		
+		// Display an error message in the console if an invalid horizontalMove
+		// 	value is detected.
+		else
+		{
+			trace("ERROR: An invalid value for horizontalMove (" + 
+				horizontalMove + ") was passed into groundMovement()");
+		}
+		
+		#end // End of the conditional compilation section.
+	}
+	
+	private function airMovement(isRunning:Bool, horizontalMove:Int, elapsed:Float):Void
+	{
+	// Change max speed if the player is running
+		if (isRunning)
+		{
+			xMaxSpeed = runSpeed;
+		}
+		else
+		{
+			xMaxSpeed = walkSpeed;
+		}
+		
+		// If horizontalMove is -1, the Player should move left.
+		if (horizontalMove == -1)
+		{
+				acceleration.x = -xAccel;
+		}
+		
+		// If horizontalMove is 1, the Player should move right.
+		else if (horizontalMove == 1)
+		{
+			acceleration.x = xAccel;
+		}
+		
+		// Stop horizontal acceleration if no direction held
+		else if (horizontalMove == 0)
+		{
+			acceleration.x = 0;
+		}
+		
+		#if debug // Only compile this code into a debug version of the game.
+		
+		// Display an error message in the console if an invalid horizontalMove
+		// 	value is detected.
+		else
+		{
+			trace("ERROR: An invalid value for horizontalMove (" + 
+				horizontalMove + ") was passed into airMovement()");
+		}
+		
+		#end // End of the conditional compilation section.
 	}
 	
 	public override function update(elapsed:Float):Void
@@ -130,7 +184,7 @@ class Player extends FlxSprite
 		}
 		
 		// Determine if attempted to jump
-		var attemptedJump:Bool = FlxG.keys.anyPressed([FlxKey.X, FlxKey.BACKSLASH]);
+		var attemptedJump:Bool = FlxG.keys.anyJustPressed([FlxKey.X, FlxKey.BACKSLASH]);
 		
 		if (isTouching(FlxObject.DOWN))
 		{
@@ -149,6 +203,10 @@ class Player extends FlxSprite
 			{
 				groundMovement(isRunning, horizontalMove, elapsed);
 			}
+		}
+		else
+		{
+			airMovement(isRunning, horizontalMove, elapsed);
 		}
 		
 		super.update(elapsed);
