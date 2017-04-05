@@ -184,7 +184,7 @@ class Player extends FlxSprite
 		}
 		
 		// Determine if attempted to jump
-		var attemptedJump:Bool = FlxG.keys.anyJustPressed([FlxKey.X, FlxKey.BACKSLASH]);
+		var attemptedJump:Bool = FlxG.keys.anyJustPressed([FlxKey.X, FlxKey.SLASH]);
 		
 		if (isTouching(FlxObject.DOWN))
 		{
@@ -210,6 +210,8 @@ class Player extends FlxSprite
 		}
 		
 		super.update(elapsed);
+		
+		onGround = false;
 	}
 	
 }
